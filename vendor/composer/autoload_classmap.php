@@ -6,7 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Category' => $baseDir . '/app/Category.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
+    'App\\Credit' => $baseDir . '/app/Credit.php',
+    'App\\Debit' => $baseDir . '/app/Debit.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
     'App\\Http\\Controllers\\Auth\\LoginController' => $baseDir . '/app/Http/Controllers/Auth/LoginController.php',
@@ -33,7 +36,11 @@ return array(
     'Carbon\\Laravel\\ServiceProvider' => $vendorDir . '/nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php',
     'Carbon\\Translator' => $vendorDir . '/nesbot/carbon/src/Carbon/Translator.php',
     'Carbon\\Upgrade' => $vendorDir . '/nesbot/carbon/src/Carbon/Upgrade.php',
+    'CreateCategorysTable' => $baseDir . '/database/migrations/2019_10_22_022243_create_categorys_table.php',
+    'CreateCreditsTable' => $baseDir . '/database/migrations/2019_10_29_044539_create_credits_table.php',
+    'CreateDebitsTable' => $baseDir . '/database/migrations/2019_10_29_044527_create_debits_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
+    'CreateSavingsTable' => $baseDir . '/database/migrations/2019_10_22_021820_create_savings_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'Cron\\AbstractField' => $vendorDir . '/mtdowling/cron-expression/src/Cron/AbstractField.php',
     'Cron\\CronExpression' => $vendorDir . '/mtdowling/cron-expression/src/Cron/CronExpression.php',

@@ -302,7 +302,10 @@ class ComposerStaticInit228ec911e83d3271e6fc76ce4134f333
     );
 
     public static $classMap = array (
+        'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Credit' => __DIR__ . '/../..' . '/app/Credit.php',
+        'App\\Debit' => __DIR__ . '/../..' . '/app/Debit.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
@@ -329,7 +332,11 @@ class ComposerStaticInit228ec911e83d3271e6fc76ce4134f333
         'Carbon\\Laravel\\ServiceProvider' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php',
         'Carbon\\Translator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Translator.php',
         'Carbon\\Upgrade' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Upgrade.php',
+        'CreateCategorysTable' => __DIR__ . '/../..' . '/database/migrations/2019_10_22_022243_create_categorys_table.php',
+        'CreateCreditsTable' => __DIR__ . '/../..' . '/database/migrations/2019_10_29_044539_create_credits_table.php',
+        'CreateDebitsTable' => __DIR__ . '/../..' . '/database/migrations/2019_10_29_044527_create_debits_table.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
+        'CreateSavingsTable' => __DIR__ . '/../..' . '/database/migrations/2019_10_22_021820_create_savings_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron/CronExpression.php',
