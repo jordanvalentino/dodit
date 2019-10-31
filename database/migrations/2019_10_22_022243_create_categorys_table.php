@@ -18,6 +18,12 @@ class CreateCategorysTable extends Migration
             $table->string('name');
             $table->enum('type', ['db','cr']);
             $table->integer('super_id')->unsigned()->nullable();
+
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')
+                  ->references('id')
+                  ->on('users');
+
             $table->timestamps();
         });
 

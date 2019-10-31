@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDebitsTable extends Migration
+class CreateTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateDebitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('debits', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
             $table->double('amount');
-
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users');
+            $table->text('detail');
+            $table->string('attachment', 255);
 
             $table->integer('category_id')->unsigned();
             $table->foreign('category_id')
@@ -38,6 +35,6 @@ class CreateDebitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('debits');
+        Schema::dropIfExists('transactions');
     }
 }
