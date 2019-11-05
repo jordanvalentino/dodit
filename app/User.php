@@ -27,9 +27,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function savings()
+    public function budgets()
     {
-        return $this->hasMany('App\Saving');
+        return $this->hasMany('App\Budget');
     }
 
     public function categories()
