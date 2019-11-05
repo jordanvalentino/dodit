@@ -1,10 +1,20 @@
-@section('title', 'Home')
-
 @extends('layouts.master')
+
+@section('title', 'Home')
 
 @section('sidebar')
   @include('layouts.sidebar')
 @endsection
+
+@section('plugin')
+  <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+@endsection
+
+@section('script')
+  <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
+  <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+@endsection
+
 
 @section('main-content')
 
