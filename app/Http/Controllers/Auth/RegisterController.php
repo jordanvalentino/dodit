@@ -27,11 +27,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/transaction';
-    protected function redirectTo()
-    {
-        return redirect('/login');
-    }
+    protected $redirectTo = 'debit_category';
 
     /**
      * Create a new controller instance.
@@ -70,6 +66,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'is_login' => 0,
         ]);
     }
 

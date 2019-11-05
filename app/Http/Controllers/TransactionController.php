@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use App\Category;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class TransactionController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -17,15 +15,15 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
-
+    
     /**
-     * Show the application dashboard.
+     * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('home');
+        //
     }
 
     /**
