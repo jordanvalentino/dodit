@@ -1,0 +1,19 @@
+NOTULEN (6/11/2019)
+Kabinet Kerja 2.0
+- 160415158 Nizhar Dendra A.
+- 160416033 Jordan Valentino L.
+- 160416135 Muhammad Asyraf
+- 160417007 Jorgy Ariel K.
+- 160717005 Stephanie Chandra
+
+
+2. Categories: pakai bootstrap tree view/sejenisnya
+5. Advance search pada transaction (parameter serah banyaknya, banyak NAMBAH NILAI :))
+
+DONE:
+1. Di dashboard: Earning (pendapatan perbulan), spending (pengeluaran perbulan)
+	Task (budget plan completeness :v): untuk melihat berapa banyak budget plan yg
+	sudah berhasil, ongoing budget plan: berapa banyak budget plan yg sedang berjalan
+3. Transaction: pada categories menggunakan indentasi (minor, kalau bisa nilai tambah)
+4. Transaction: memperlihatkan spending dan earning dalam bentuk timeline (per bulan/ per
+	kategori) (Wajib)
