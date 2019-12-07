@@ -8,6 +8,8 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use PDF;
+use Excel;
 
 class TransactionController extends Controller
 {
@@ -275,5 +277,77 @@ class TransactionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function export_pdf()
+    {
+        $transactions = Auth::user()->transactions()
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        $pdf = PDF::loadview('export.index',['transactions'=>$transactions]);
+        //auto buka di browser
+        return $pdf->stream();
+        // auto download file pdf
+        // return $pdf->download('laporankeuangan.pdf');
+    }
+
+    public function export_excel()
+    {
+        $transactions = Auth::user()->transactions()
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        // return Excel::create('laporankeuangan', function($excel) {
+        //     $excel->sheet('sheet1', function($sheet) {
+        //         $sheet->loadView('export.index',array('transactions'=>$transactions));
+        //     });
+        // })->download();
+        // return Excel::loadView('export.index', array('transactions => $transactions'))->export('xls');
+
+        Excel::create('laporankeuangan', function($excel) {
+            $excel->sheet('Sheet1', function($sheet) {
+                    $transactions = Auth::user()->transactions()
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                    foreach($transactions as $key => $trans) {
+                     $data[] = array(
+                        $key+1,
+                        $trans->created_at,
+                        $trans->detail,
+                        $trans->amount,
+                        $trans->category->name
+                    );
+                }
+
+                // $headings = array('no', 'Date', 'Detail', 'Amount', 'Category');
+
+                // $sheet->prependRow(1, $headings);
+                // $sheet->row(1, array(
+                //      'no', 'Date', 'Detail', 'Amount', 'Category'
+                // ));
+                // $sheet->cell('A1', function($cell) {
+                //     // manipulate the cell
+                //     $cell->setValue('no');
+                // });
+                // $sheet->cell('B1', function($cell) {
+                //     // manipulate the cell
+                //     $cell->setValue('Date');
+                // });
+                // $sheet->cell('C1', function($cell) {
+                //     // manipulate the cell
+                //     $cell->setValue('Detail');
+                // });
+                // $sheet->cell('D1', function($cell) {
+                //     // manipulate the cell
+                //     $cell->setValue('Amount');
+                // });
+                // $sheet->cell('E1', function($cell) {
+                //     // manipulate the cell
+                //     $cell->setValue('Category');
+                // });
+                $sheet->fromArray($data);
+            });
+        })->export('xls');
     }
 }

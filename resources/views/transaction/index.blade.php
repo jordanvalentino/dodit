@@ -135,6 +135,12 @@
               @endif
             </tbody>
           </table>
+          <a href="{{url('transaction/export/pdf')}}">
+              Export to PDF
+          </a><br>
+          <a href="{{url('transaction/export/excel')}}">
+              Export to Excel
+          </a>
         </div>
       </div>
     </div>
