@@ -15,14 +15,17 @@ class CreditCategoryController extends Controller
      */
     public function index()
     {
-         $categories = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->where('super_id', NULL)
-                        ->get();
+        $categories = Category::credits(true);
+        $is_category_exist = Category::is_exist();
 
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        // $categories = Auth::user()->categories()
+        //                 ->where('type', 'cr')
+        //                 ->where('super_id', NULL)
+        //                 ->get();
+
+        // $is_category_exist = 
+        //     (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
+        //     (Auth::user()->categories()->where('type', 'cr')->count() > 0);
         // dd($is_category_exist);
 
         return view('credit_category.index', [
@@ -38,13 +41,16 @@ class CreditCategoryController extends Controller
      */
     public function create()
     {
-        $categories = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->get();
+        $categories = Category::credits();
+        $is_category_exist = Category::is_exist();
 
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        // $categories = Auth::user()->categories()
+        //                 ->where('type', 'cr')
+        //                 ->get();
+
+        // $is_category_exist = 
+        //     (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
+        //     (Auth::user()->categories()->where('type', 'cr')->count() > 0);
 
         return view('credit_category.create', [
             'categories' => $categories,
@@ -60,12 +66,7 @@ class CreditCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = new Category([
-            'name' => $request->name,
-            'type' => 'cr',
-            'super_id' => ($request->super_id != 0) ? $request->super_id : NULL,
-            'user_id' => Auth::id(),
-        ]);
+        $category = Category::fromRequest($request, 'cr');
 
         if ($request->super_id == 0) // if not sub-category
         {
@@ -99,16 +100,14 @@ class CreditCategoryController extends Controller
      */
     public function edit($id)
     {
-        $categories = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->where('id', '!=', $id)
-                        ->get();
+        // $categories = Auth::user()->categories()
+        //                 ->where('type', 'cr')
+        //                 ->where('id', '!=', $id)
+        //                 ->get();
 
+        $categories = collect(Category::credits())->where('id', '!=', $id);
         $category = Category::find($id);
-
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        $is_category_exist = Category::is_exist();
 
         return view('credit_category.edit', [
             'categories' => $categories,
@@ -132,7 +131,7 @@ class CreditCategoryController extends Controller
         $category->parent()->dissociate();
 
         if ($request->super_id != 0)
-        {    
+        {
             $parent = Category::find($request->super_id);
             $parent->children()->save($category);
 
@@ -163,7 +162,7 @@ class CreditCategoryController extends Controller
             );
         }
         else
-        {   
+        {
             $category->delete();
             return redirect('credit_category')->with('message', $category->name." deleted successfully.");
         }

@@ -15,14 +15,8 @@ class DebitCategoryController extends Controller
      */
     public function index()
     {
-        $categories = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->where('super_id', NULL)
-                        ->get();
-
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        $categories = Category::debits(true);
+        $is_category_exist = Category::is_exist();
         // dd($is_category_exist);
 
         return view('debit_category.index', [
@@ -38,13 +32,8 @@ class DebitCategoryController extends Controller
      */
     public function create()
     {
-        $categories = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->get();
-
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        $categories = Category::debits();
+        $is_category_exist = Category::is_exist();
 
         return view('debit_category.create', [
             'categories' => $categories,
@@ -60,12 +49,7 @@ class DebitCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = new Category([
-            'name' => $request->name,
-            'type' => 'db',
-            'super_id' => ($request->super_id != 0) ? $request->super_id : NULL,
-            'user_id' => Auth::id(),
-        ]);
+        $category = Category::fromRequest($request, 'db');
 
         if ($request->super_id == 0) // if not sub-category
         {
@@ -99,16 +83,9 @@ class DebitCategoryController extends Controller
      */
     public function edit($id)
     {
-        $categories = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->where('id', '!=', $id)
-                        ->get();
-
+        $categories = collect(Category::debits())->where('id', '!=', $id);
         $category = Category::find($id);
-
-        $is_category_exist = 
-            (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-            (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        $is_category_exist = Category::is_exist();
 
         return view('debit_category.edit', [
             'categories' => $categories,
