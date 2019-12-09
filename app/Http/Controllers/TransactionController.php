@@ -32,7 +32,8 @@ class TransactionController extends Controller
                         ->orderBy('created_at', 'desc')
                         ->get();
 
-        $is_transaction_exist = $transactions->count() > 0;
+        // $is_transaction_exist = $transactions->count() > 0;
+        $is_transaction_exist = Transaction::is_exist();
 
         return view('transaction.index', [
             'transactions' => $transactions,

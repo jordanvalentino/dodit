@@ -86,7 +86,7 @@
                 @for ($i = 0; $i < $budgets->count(); $i++)
                 <tr>
                   <td>{{ $budgets[$i]->title }}</td>
-                  <td>{{ number_format($budgets[$i]->amount, 0, ',', '.') }}</td>
+                  <td>{{ number_format($budgets[$i]->amount) }}</td>
                   <td>{{ date('d M \'y', strtotime($budgets[$i]->start)) }}</td>
                   <td>{{ date('d M \'y', strtotime($budgets[$i]->end)) }}</td>
                   <td>

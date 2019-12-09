@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Budget;
 use App\Category;
+use App\Transaction;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,37 +28,25 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $db_cats = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->count();
+        // $db_cats = Auth::user()->categories()
+        //                 ->where('type', 'db')
+        //                 ->count();
 
-        $cr_cats = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->count();
+        // $cr_cats = Auth::user()->categories()
+        //                 ->where('type', 'cr')
+        //                 ->count();
 
-        if ($db_cats == 0 || $cr_cats == 0) {
-            return redirect('debit_category');
-        }
+        // if ($db_cats == 0 || $cr_cats == 0) {
+        //     return redirect('debit_category');
+        // }
+        
+        if (!Category::is_exist()) return redirect('debit_category');
 
-        $total_earnings = DB::table('transactions')
-                        ->join('categories', 'transactions.category_id', 'categories.id')
-                        ->where('categories.type', '=', 'db')
-                        ->where('categories.user_id', Auth::id())
-                        ->sum('transactions.amount');
+        $total_earnings = Transaction::total_earnings();
+        $total_spendings = Transaction::total_spendings();
 
-        $total_spendings = DB::table('transactions')
-                        ->join('categories', 'transactions.category_id', 'categories.id')
-                        ->where('categories.type', '=', 'cr')
-                        ->where('categories.user_id', Auth::id())
-                        ->sum('transactions.amount');
-
-        $finished_plans = Auth::user()->budgets()
-                        ->where('is_finished', '=', '1')
-                        ->count();
-
-        $ongoing_plans = Auth::user()->budgets()
-                        ->where('is_finished', '=', '0')
-                        ->count();
+        $finished_plans = collect(Budget::finished())->count();
+        $ongoing_plans = collect(Budget::ongoing())->count();
 
         return view('home', [
             'total_earnings' => $total_earnings,

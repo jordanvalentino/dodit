@@ -42,7 +42,7 @@
             <div class="row no-gutters align-items-center">
               <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Earnings</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. {{ number_format($total_earnings, 0, ',', '.') }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. {{ number_format($total_earnings) }}</div>
               </div>
               <div class="col-auto">
                 <i class="fas fa-piggy-bank fa-2x text-gray-300"></i>
@@ -59,7 +59,7 @@
             <div class="row no-gutters align-items-center">
               <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Spendings</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. {{ number_format($total_spendings, 0, ',', '.') }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">Rp. {{ number_format($total_spendings) }}</div>
               </div>
               <div class="col-auto">
                 <i class="fas fa-hand-holding-usd fa-2x text-gray-300"></i>
