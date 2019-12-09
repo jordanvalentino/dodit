@@ -30,4 +30,6 @@ Route::resource('detail', 'DetailController');
 Route::get('detail/create/{budget_id}', 'DetailController@create');
 Route::get('detail/{budget_id}/{id}/edit', 'DetailController@edit');
 Route::delete('detail/{budget_id}/{id}', 'DetailController@destroy');
+Route::get('transaction/export/pdf', 'TransactionController@export_pdf');
+Route::get('transaction/export/excel', 'TransactionController@export_excel');
 // Route::resource('transaction', 'TransactionController');
