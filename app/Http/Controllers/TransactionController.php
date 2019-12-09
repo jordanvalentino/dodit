@@ -294,22 +294,23 @@ class TransactionController extends Controller
 
     public function export_excel()
     {
-        $transactions = Auth::user()->transactions()
-                        ->orderBy('created_at', 'desc')
-                        ->get();
-
-        // return Excel::create('laporankeuangan', function($excel) {
-        //     $excel->sheet('sheet1', function($sheet) {
-        //         $sheet->loadView('export.index',array('transactions'=>$transactions));
-        //     });
-        // })->download();
-        // return Excel::loadView('export.index', array('transactions => $transactions'))->export('xls');
-
         Excel::create('laporankeuangan', function($excel) {
             $excel->sheet('Sheet1', function($sheet) {
                     $transactions = Auth::user()->transactions()
                             ->orderBy('created_at', 'desc')
                             ->get();
+
+                    foreach($transactions as $key => $trans) {
+                        if($trans->category->type == 'cr')
+                        {
+                            $trans->amount = '-'.$trans->amount;
+                        }
+                        else
+                        {
+                            $trans->amount = '+'.$trans->amount;
+                        }
+                    }
+                    
                     foreach($transactions as $key => $trans) {
                      $data[] = array(
                         $key+1,
@@ -317,35 +318,11 @@ class TransactionController extends Controller
                         $trans->detail,
                         $trans->amount,
                         $trans->category->name
-                    );
-                }
+                        );
+                    }
 
-                // $headings = array('no', 'Date', 'Detail', 'Amount', 'Category');
-
-                // $sheet->prependRow(1, $headings);
-                // $sheet->row(1, array(
-                //      'no', 'Date', 'Detail', 'Amount', 'Category'
-                // ));
-                // $sheet->cell('A1', function($cell) {
-                //     // manipulate the cell
-                //     $cell->setValue('no');
-                // });
-                // $sheet->cell('B1', function($cell) {
-                //     // manipulate the cell
-                //     $cell->setValue('Date');
-                // });
-                // $sheet->cell('C1', function($cell) {
-                //     // manipulate the cell
-                //     $cell->setValue('Detail');
-                // });
-                // $sheet->cell('D1', function($cell) {
-                //     // manipulate the cell
-                //     $cell->setValue('Amount');
-                // });
-                // $sheet->cell('E1', function($cell) {
-                //     // manipulate the cell
-                //     $cell->setValue('Category');
-                // });
+                $headings = array('no', 'Date', 'Detail', 'Amount', 'Category');
+                $sheet->prependRow(1, $headings);
                 $sheet->fromArray($data);
             });
         })->export('xls');
