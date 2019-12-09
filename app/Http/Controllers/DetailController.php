@@ -28,8 +28,13 @@ class DetailController extends Controller
     {
         $budget_id = $request->budget_id;
 
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
         return view('detail.create', [
             'budget_id' => $budget_id,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -41,13 +46,17 @@ class DetailController extends Controller
      */
     public function store(Request $request)
     {
-        $detail = new Detail([
-            'amount' => $request->amount,
-            'budget_id' => $request->budget_id,
-        ]);
-
+        $detail = Detail::fromRequest($request);
         $budget = Budget::find($request->budget_id);
         $budget->details()->save($detail);
+
+        if ($budget->progress() == 1)
+        {
+            $budget->is_finished = 1;
+            $budget->save();
+
+            return redirect('budget')->with('message', 'Congratulation! Budget plan has been fulfilled.');
+        }
 
         $details = $budget->details()->get();
 
@@ -55,6 +64,8 @@ class DetailController extends Controller
             'budget' => $budget,
             'details' => $details,
             'is_detail_exist' => true,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ])->with('message', "Budget detail has been recorded successfully.");
     }
 
@@ -78,12 +89,16 @@ class DetailController extends Controller
     public function edit(Request $request)
     {
         $budget_id = $request->budget_id;
-
         $detail = Detail::find($request->id);
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('detail.edit', [
             'budget_id' => $budget_id,
             'detail' => $detail,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -102,6 +117,19 @@ class DetailController extends Controller
         $detail->save();
 
         $budget = Budget::find($request->budget_id);
+
+        if ($budget->progress() == 1)
+        {
+            $budget->is_finished = 1;
+            $budget->save();
+
+            return redirect('budget')->with('message', 'Congratulation! Budget plan has been fulfilled.');
+        }
+        else
+        {
+            $budget->is_finished = 0;
+            $budget->save();
+        }
 
         $details = $budget->details()->get();
 
@@ -125,9 +153,22 @@ class DetailController extends Controller
         $detail->delete();
 
         $budget = Budget::find($request->budget_id);
-        $details = $budget->details()->get();
 
-        $is_detail_exist = $details->count() > 0;
+        if ($budget->progress() == 1)
+        {
+            $budget->is_finished = 1;
+            $budget->save();
+
+            return redirect('budget')->with('message', 'Congratulation! Budget plan has been fulfilled.');
+        }
+        else
+        {
+            $budget->is_finished = 0;
+            $budget->save();
+        }
+
+        $details = $budget->details()->get();
+        $is_detail_exist = $budget->hasDetails();
 
         return view('detail.index', [
             'budget' => $budget,

@@ -16,27 +16,29 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        $budgets = Auth::user()->budgets()
-                        ->get();
+        $budgets = Auth::user()->budgets()->get();
+        $is_budget_exist = Budget::isExist();
 
-        $is_budget_exist = Auth::user()->budgets()->count() > 0;
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
-        $saves = [];
-        for ($i = 0; $i < $budgets->count(); $i++)
-        {
-            $save = DB::table('details')
-                    ->join('budgets', 'details.budget_id', 'budgets.id')
-                    ->where('budgets.id', '=', $budgets[$i]->id)
-                    ->where('budgets.user_id', '=', Auth::id())
-                    ->sum('details.amount');
+        // $saves = [];
+        // for ($i = 0; $i < $budgets->count(); $i++)
+        // {
+        //     $save = DB::table('details')
+        //             ->join('budgets', 'details.budget_id', 'budgets.id')
+        //             ->where('budgets.id', '=', $budgets[$i]->id)
+        //             ->where('budgets.user_id', '=', Auth::id())
+        //             ->sum('details.amount');
 
-            $saves[] = $save;
-        }
+        //     $saves[] = $save;
+        // }
 
         return view('budget.index', [
             'budgets' => $budgets,
             'is_budget_exist' => $is_budget_exist,
-            'saves' => collect($saves),
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -47,7 +49,13 @@ class BudgetController extends Controller
      */
     public function create()
     {
-        return view('budget.create');
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
+        return view('budget.create', [
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
+        ]);
     }
 
     /**
@@ -58,18 +66,10 @@ class BudgetController extends Controller
      */
     public function store(Request $request)
     {
-        $budget = new Budget([
-            'title' => $request->title,
-            'amount' => $request->amount,
-            'start' => $request->start,
-            'end' => $request->end,
-            'is_finished' => false,
-            'user_id' => Auth::id(),
-        ]);
-
+        $budget = Budget::fromRequest($request);
         $budget->save();
 
-        return redirect('budget')->with('message', $budget->name." created successfully.");
+        return redirect('budget')->with('message', $budget->title." created successfully.");
     }
 
     /**
@@ -82,13 +82,17 @@ class BudgetController extends Controller
     {
         $budget = Budget::find($id);
         $details = $budget->details()->get();
+        $is_detail_exist = $budget->hasDetails();
 
-        $is_detail_exist = $details->count() > 0;
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('detail.index', [
             'budget' => $budget,
             'details' => $details,
             'is_detail_exist' => $is_detail_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -102,8 +106,13 @@ class BudgetController extends Controller
     {
         $budget = Budget::find($id);
 
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
         return view('budget.edit', [
             'budget' => $budget,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -137,7 +146,7 @@ class BudgetController extends Controller
     {
         $budget = Budget::find($id);
 
-        if ($budget->details->count() > 0)
+        if ($budget->hasDetails())
         {
             return redirect('budget')->with('message', "Cannot delete budget plan because it still has details.");
         }

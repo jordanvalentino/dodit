@@ -2,7 +2,10 @@
 
 namespace App;
 
+use DB;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class Budget extends Model
@@ -21,6 +24,48 @@ class Budget extends Model
     	return $this->hasMany('App\Detail');
     }
 
+    public static function fromRequest(Request $request)
+    {
+        return new self([
+            'title' => $request->title,
+            'amount' => $request->amount,
+            'start' => $request->start,
+            'end' => $request->end,
+            'is_finished' => false,
+            'user_id' => Auth::id(),
+        ]);
+    }
+
+    public function hasDetails()
+    {
+        return self::details()->count() > 0;
+    }
+
+    public function stored()
+    {
+        return DB::table('details')
+                ->join('budgets', 'details.budget_id', 'budgets.id')
+                ->where('budgets.id', '=', $this->id)
+                ->where('budgets.user_id', '=', Auth::id())
+                ->sum('details.amount');
+    }
+
+    public function progress()
+    {
+        $progress = $this->stored() / $this->amount;
+        return ($progress <= 1) ? $progress : 1;
+    }
+
+    public function dueDate()
+    {
+        return Carbon::parse($this->end)->diffInDays(Carbon::today());
+    }
+
+    public static function isExist()
+    {
+        return Auth::user()->budgets()->count() > 0;
+    }
+
     public static function finished()
     {
         return Auth::user()->budgets()->where('is_finished', '=', '1')->get();
@@ -29,5 +74,18 @@ class Budget extends Model
     public static function ongoing()
     {
         return Auth::user()->budgets()->where('is_finished', '=', '0')->get();
+    }
+
+    public static function willOverdue()
+    {
+        return self::ongoing()
+                ->where('end', '>=', Carbon::today())
+                ->where('end', '<=', Carbon::today()->addDays(7));
+    }
+
+    public static function overdue()
+    {
+        return self::ongoing()
+                ->where('end', '<', Carbon::today());
     }
 }

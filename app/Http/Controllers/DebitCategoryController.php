@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Budget;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,12 +17,16 @@ class DebitCategoryController extends Controller
     public function index()
     {
         $categories = Category::debits(true);
-        $is_category_exist = Category::is_exist();
-        // dd($is_category_exist);
+        $is_category_exist = Category::isExist();
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('debit_category.index', [
             'categories' => $categories,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -33,11 +38,16 @@ class DebitCategoryController extends Controller
     public function create()
     {
         $categories = Category::debits();
-        $is_category_exist = Category::is_exist();
+        $is_category_exist = Category::isExist();
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('debit_category.create', [
             'categories' => $categories,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -85,12 +95,17 @@ class DebitCategoryController extends Controller
     {
         $categories = collect(Category::debits())->where('id', '!=', $id);
         $category = Category::find($id);
-        $is_category_exist = Category::is_exist();
+        $is_category_exist = Category::isExist();
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('debit_category.edit', [
             'categories' => $categories,
             'category' => $category,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 

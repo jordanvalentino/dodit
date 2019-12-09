@@ -68,7 +68,7 @@
 
         <div class="form-group">
           <div class="col-sm-6 mb-3 mb-sm-0">
-            <a href="{{ url('detail') }}" class="btn btn-danger btn-user btn-block">
+            <a href="#" onclick="window.history.back();" class="btn btn-danger btn-user btn-block">
             Back
           </a>
           </div>

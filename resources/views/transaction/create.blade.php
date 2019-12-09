@@ -52,25 +52,33 @@
             <select class="form-control" name="category_id" placeholder="Category" autofocus>
               
               <optgroup label="Earnings">
-                @for ($i = 0; $i < $db_categories->count(); $i++)
-                <option value="{{ $db_categories[$i]->id }}" @if ($i == 0) selected @endif>
-                  @if ($db_categories[$i]->parent != null)
-                    - &nbsp;&nbsp;
-                  @endif
-                  {{ $db_categories[$i]->name }}
+                @foreach ($debits as $index => $parent)
+                <option value="{{ $parent->id }}" @if ($index == 0) selected @endif>
+                  {{ $parent->name }}
                 </option>
-                @endfor
+                @if ($parent->hasChildren())
+                  @foreach ($parent->children as $child)
+                  <option value="{{ $child->id }}">
+                    - &nbsp; {{ $child->name }}
+                  </option>
+                  @endforeach
+                @endif
+                @endforeach
               </optgroup>
 
               <optgroup label="Spendings">
-                @for ($i = 0; $i < $cr_categories->count(); $i++)
-                <option value="{{ $cr_categories[$i]->id }}">
-                  @if ($cr_categories[$i]->parent != null)
-                    - &nbsp;&nbsp;
-                  @endif
-                  {{ $cr_categories[$i]->name }}
+                @foreach ($credits as $index => $parent)
+                <option value="{{ $parent->id }}">
+                  {{ $parent->name }}
                 </option>
-                @endfor
+                @if ($parent->hasChildren())
+                  @foreach ($parent->children as $child)
+                  <option value="{{ $child->id }}">
+                    - &nbsp; {{ $child->name }}
+                  </option>
+                  @endforeach
+                @endif
+                @endforeach
               </optgroup>
 
             </select>

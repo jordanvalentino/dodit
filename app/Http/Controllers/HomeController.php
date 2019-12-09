@@ -27,32 +27,25 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        // $db_cats = Auth::user()->categories()
-        //                 ->where('type', 'db')
-        //                 ->count();
-
-        // $cr_cats = Auth::user()->categories()
-        //                 ->where('type', 'cr')
-        //                 ->count();
-
-        // if ($db_cats == 0 || $cr_cats == 0) {
-        //     return redirect('debit_category');
-        // }
-        
-        if (!Category::is_exist()) return redirect('debit_category');
+    {        
+        if (!Category::isExist()) return redirect('debit_category');
 
         $total_earnings = Transaction::total_earnings();
         $total_spendings = Transaction::total_spendings();
 
-        $finished_plans = collect(Budget::finished())->count();
-        $ongoing_plans = collect(Budget::ongoing())->count();
+        $finished_plans = Budget::finished()->count();
+        $ongoing_plans = Budget::ongoing()->count();
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('home', [
             'total_earnings' => $total_earnings,
             'total_spendings' => $total_spendings,
             'finished_plans' =>$finished_plans,
             'ongoing_plans' => $ongoing_plans,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 }

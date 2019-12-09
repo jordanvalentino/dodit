@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Budget;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,21 +17,16 @@ class CreditCategoryController extends Controller
     public function index()
     {
         $categories = Category::credits(true);
-        $is_category_exist = Category::is_exist();
+        $is_category_exist = Category::isExist();
 
-        // $categories = Auth::user()->categories()
-        //                 ->where('type', 'cr')
-        //                 ->where('super_id', NULL)
-        //                 ->get();
-
-        // $is_category_exist = 
-        //     (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-        //     (Auth::user()->categories()->where('type', 'cr')->count() > 0);
-        // dd($is_category_exist);
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('credit_category.index', [
             'categories' => $categories,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -42,19 +38,16 @@ class CreditCategoryController extends Controller
     public function create()
     {
         $categories = Category::credits();
-        $is_category_exist = Category::is_exist();
+        $is_category_exist = Category::isExist();
 
-        // $categories = Auth::user()->categories()
-        //                 ->where('type', 'cr')
-        //                 ->get();
-
-        // $is_category_exist = 
-        //     (Auth::user()->categories()->where('type', 'db')->count() > 0) &&
-        //     (Auth::user()->categories()->where('type', 'cr')->count() > 0);
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('credit_category.create', [
             'categories' => $categories,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -100,19 +93,19 @@ class CreditCategoryController extends Controller
      */
     public function edit($id)
     {
-        // $categories = Auth::user()->categories()
-        //                 ->where('type', 'cr')
-        //                 ->where('id', '!=', $id)
-        //                 ->get();
-
         $categories = collect(Category::credits())->where('id', '!=', $id);
         $category = Category::find($id);
-        $is_category_exist = Category::is_exist();
+        $is_category_exist = Category::isExist();
+
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('credit_category.edit', [
             'categories' => $categories,
             'category' => $category,
             'is_category_exist' => $is_category_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 

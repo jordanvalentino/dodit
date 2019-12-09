@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use Excel;
+use PDF;
+use App\Budget;
 use App\Category;
 use App\Transaction;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use PDF;
-use Excel;
 
 class TransactionController extends Controller
 {
@@ -30,38 +31,28 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Auth::user()->transactions()
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        $transactions = Transaction::order_by_date($reverse = true);
+        $is_transaction_exist = Transaction::isExist();
 
-        // $is_transaction_exist = $transactions->count() > 0;
-        $is_transaction_exist = Transaction::is_exist();
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('transaction.index', [
             'transactions' => $transactions,
             'is_transaction_exist' => $is_transaction_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
     public function monthly(Request $request)
     {
-        $months = DB::table('transactions')
-                        ->join('categories', 'transactions.category_id', '=', 'categories.id')
-                        // ->join('users', 'categories.user_id', '=', 'users.id')
-                        ->select(DB::raw('MONTHNAME(transactions.created_at) as month, YEAR(transactions.created_at) as year'))
-                        // ->where('users.id', Auth::id())
-                        ->where('categories.user_id', Auth::id())
-                        ->orderBy('transactions.created_at')
-                        ->distinct()
-                        ->get();
+        $months = Transaction::get_available_month_year();
+        $transactions = Transaction::monthly($request->month, $request->year);
+        $is_transaction_exist = Transaction::isExist();
 
-        $transactions = Auth::user()->transactions()
-                        ->whereMonth('transactions.created_at', $request->month)
-                        ->whereYear('transactions.created_at', $request->year)
-                        ->orderBy('transactions.created_at', 'desc')
-                        ->get();
-
-        $is_transaction_exist = $transactions->count() > 0;
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('transaction.index', [
             'months' => $months,
@@ -69,32 +60,27 @@ class TransactionController extends Controller
             'is_transaction_exist' => $is_transaction_exist,
             'sel_month' => $request->month,
             'sel_year' => $request->year,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
     public function annually(Request $request)
     {
-        $years = DB::table('transactions')
-                        ->join('categories', 'transactions.category_id', '=', 'categories.id')
-                        // ->join('users', 'categories.user_id', '=', 'users.id')
-                        ->select(DB::raw('YEAR(transactions.created_at) as year'))
-                        ->where('categories.user_id', Auth::id())
-                        // ->where('users.id', Auth::id())
-                        ->distinct()
-                        ->get();
+        $years = Transaction::get_available_year();
+        $transactions = Transaction::annually($request->year);
+        $is_transaction_exist = Transaction::isExist();
 
-        $transactions = Auth::user()->transactions()
-                        ->whereYear('transactions.created_at', $request->year)
-                        ->orderBy('transactions.created_at', 'desc')
-                        ->get();
-
-        $is_transaction_exist = $transactions->count() > 0;
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('transaction.index', [
             'years' => $years,
             'transactions' => $transactions,
             'is_transaction_exist' => $is_transaction_exist,
             'sel_year' => $request->year,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -105,44 +91,17 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        $debit_cats = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->where('super_id', NULL)
-                        ->orderBy('name')
-                        ->get();
+        $debits = Category::debits($parent_only = true);
+        $credits = Category::credits($parent_only = true);
 
-        $credit_cats = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->where('super_id', NULL)
-                        ->orderBy('name')
-                        ->get();
-
-        $db_categories = [];
-        foreach($debit_cats as $cat)
-        {
-            $db_categories[] = $cat;
-            foreach($cat->children as $subcat)
-            {
-                $db_categories[] = $subcat;
-            }
-        }
-
-
-        $cr_categories = [];
-        foreach($credit_cats as $cat)
-        {
-            $cr_categories[] = $cat;
-            foreach($cat->children as $subcat)
-            {
-                $cr_categories[] = $subcat;
-            }
-        }
-
-        // dd($cr_categories);
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('transaction.create', [
-            'db_categories' => collect($db_categories),
-            'cr_categories' => collect($cr_categories),
+            'debits' => $debits,
+            'credits' => $credits,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -154,19 +113,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $path = NULL;
-        if ($request->file('attachment') != null)
-        {
-            $path = $request->file('attachment')->store('public');
-            Storage::setVisibility($path, 'public');
-        }
-
-        $transaction = new Transaction([
-            'amount' => $request->amount,
-            'detail' => $request->detail,
-            'attachment' => $path,
-        ]);
-
+        $transaction = Transaction::fromRequest($request);
         $category = Category::find($request->category_id);
         $category->transactions()->save($transaction);
 
@@ -193,44 +140,18 @@ class TransactionController extends Controller
     public function edit($id)
     {
         $transaction = Transaction::find($id);
+        $debits = Category::debits($parent_only = true);
+        $credits = Category::credits($parent_only = true);
 
-        $debit_cats = Auth::user()->categories()
-                        ->where('type', 'db')
-                        ->where('super_id', NULL)
-                        ->orderBy('name')
-                        ->get();
-
-        $credit_cats = Auth::user()->categories()
-                        ->where('type', 'cr')
-                        ->where('super_id', NULL)
-                        ->orderBy('name')
-                        ->get();
-
-        $db_categories = [];
-        foreach($debit_cats as $cat)
-        {
-            $db_categories[] = $cat;
-            foreach($cat->children as $subcat)
-            {
-                $db_categories[] = $subcat;
-            }
-        }
-
-
-        $cr_categories = [];
-        foreach($credit_cats as $cat)
-        {
-            $cr_categories[] = $cat;
-            foreach($cat->children as $subcat)
-            {
-                $cr_categories[] = $subcat;
-            }
-        }
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
 
         return view('transaction.edit', [
             'transaction' => $transaction,
-            'db_categories' => collect($db_categories),
-            'cr_categories' => collect($cr_categories),
+            'debits' => $debits,
+            'credits' => $credits,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ]);
     }
 
@@ -257,7 +178,6 @@ class TransactionController extends Controller
             {
                 $path = $request->file('attachment')->store('public');
                 Storage::setVisibility($path, 'public');
-                dd(Storage::getVisibility($path));
             }
 
             $transaction->attachment = $path;
@@ -277,14 +197,15 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        $transaction->delete();
+
+        return redirect('transaction')->with('message', 'Transaction deleted successfully.');
     }
 
     public function export_pdf()
     {
-        $transactions = Auth::user()->transactions()
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        $transactions = Transaction::order_by_date($reverse = true);
 
         $pdf = PDF::loadview('export.index',['transactions'=>$transactions]);
         //auto buka di browser
@@ -295,9 +216,7 @@ class TransactionController extends Controller
 
     public function export_excel()
     {
-        $transactions = Auth::user()->transactions()
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        $transactions = Transaction::order_by_date($reverse = true);
 
         // return Excel::create('laporankeuangan', function($excel) {
         //     $excel->sheet('sheet1', function($sheet) {

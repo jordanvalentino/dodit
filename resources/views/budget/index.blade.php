@@ -83,35 +83,35 @@
 
               @else
 
-                @for ($i = 0; $i < $budgets->count(); $i++)
+                @foreach ($budgets as $budget)
                 <tr>
-                  <td>{{ $budgets[$i]->title }}</td>
-                  <td>{{ number_format($budgets[$i]->amount) }}</td>
-                  <td>{{ date('d M \'y', strtotime($budgets[$i]->start)) }}</td>
-                  <td>{{ date('d M \'y', strtotime($budgets[$i]->end)) }}</td>
+                  <td>{{ $budget->title }}</td>
+                  <td>{{ number_format($budget->amount) }}</td>
+                  <td>{{ date('d M \'y', strtotime($budget->start)) }}</td>
+                  <td>{{ date('d M \'y', strtotime($budget->end)) }}</td>
                   <td>
                     <div class="progress progress-sm mr-2">
                       <div class="progress-bar bg-info" role="progressbar" 
-                      style="width: {{ $saves[$i]/$budgets[$i]->amount * 100 }}%" 
-                      aria-valuenow="{{ $saves[$i]/$budgets[$i]->amount * 100 }}" 
+                      style="width: {{ $budget->progress() * 100 }}%" 
+                      aria-valuenow="{{ $budget->progress() * 100 }}" 
                       aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    {{ $saves[$i]/$budgets[$i]->amount * 100 }}%
+                    {{ $budget->progress() * 100 }}%
                   </td>
-                  <td>{{ ($budgets[$i]->is_finished) ? 'Done' : 'Not yet' }}</td>
+                  <td>{{ ($budget->is_finished) ? 'Done' : 'Not yet' }}</td>
                   <td>
-                    <a href="{{ url('budget/'.$budgets[$i]->id) }}">See details</a>
+                    <a href="{{ url('budget/'.$budget->id) }}">See details</a>
                   </td>
-                  <td><a href="{{ url('budget/'.$budgets[$i]->id.'/edit') }}">Edit</a></td>
+                  <td><a href="{{ url('budget/'.$budget->id.'/edit') }}">Edit</a></td>
                   <td>
-                    <form method="POST" action="{{ url('budget/'.$budgets[$i]->id) }}" id="delete-{{ $budgets[$i]->id }}">
+                    <form method="POST" action="{{ url('budget/'.$budget->id) }}" id="delete-{{ $budget->id }}">
                       {{ csrf_field() }}
                       {{ method_field('DELETE') }}
-                      <a href="#" onclick="document.getElementById('delete-{{ $budgets[$i]->id }}').submit()">Delete</a>
+                      <a href="#" onclick="document.getElementById('delete-{{ $budget->id }}').submit()">Delete</a>
                     </form>
                   </td>
                 </tr>
-                @endfor
+                @endforeach
 
               @endif
             </tbody>

@@ -27,11 +27,6 @@ class Category extends Model
         return $this->hasMany('App\Category', 'super_id');
     }
 
-    public static function is_exist()
-    {
-        return  (self::credits()->count() > 0) && (self::debits()->count() > 0);
-    }
-
     public static function fromRequest(Request $request, $type)
     {
         return new self([
@@ -42,9 +37,22 @@ class Category extends Model
         ]);
     }
 
+    public function hasChildren()
+    {
+        return self::children()->count() > 0;
+    }
+
+    public static function isExist()
+    {
+        return (self::credits()->count() > 0) && (self::debits()->count() > 0);
+    }
+
     public static function credits($parent_only = false)
     {
-        $categories = Auth::user()->categories()->where('type', 'cr');
+        $categories = Auth::user()
+                        ->categories()
+                        ->where('type', 'cr')
+                        ->orderBy('name');
 
         if ($parent_only)
         {
@@ -58,7 +66,10 @@ class Category extends Model
 
     public static function debits($parent_only = false)
     {
-        $categories = Auth::user()->categories()->where('type', 'db');
+        $categories = Auth::user()
+                        ->categories()
+                        ->where('type', 'db')
+                        ->orderBy('name');
 
         if ($parent_only)
         {
