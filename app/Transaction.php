@@ -47,6 +47,27 @@ class Transaction extends Model
                 ->get();
     }
 
+    public static function earnings($list = null)
+    {
+        return ($list ?? Auth::user()->transactions )->where('category.type', 'db');
+    }
+
+    public static function spendings($list = null)
+    {
+        return ($list ?? Auth::user()->transactions )->where('category.type', 'cr');
+    }
+
+    public static function sum_by_category($categories, $transactions)
+    {
+        $values = $transactions->groupBy('category_id')->map(function($item) {
+            return $item->sum('amount');
+        });
+
+        $keys = $categories->whereIn('id', $values->keys())->pluck('name');
+
+        return $keys->combine($values);
+    }
+
     public static function total_earnings()
     {
     	return DB::table('transactions')

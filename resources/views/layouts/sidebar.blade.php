@@ -27,13 +27,13 @@
     Master
   </div>
 
-  <!-- Nav Item - Pages Collapse Menu -->
+  <!-- Nav Item - Transactions Collapse Menu -->
   <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTransactions" aria-expanded="true" aria-controls="collapseTransactions">
       <i class="fas fa-coins"></i>
       <span>Transactions</span>
     </a>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+    <div id="collapseTransactions" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <a class="collapse-item" href="{{ url('transaction') }}">All Time</a>
         <a class="collapse-item" href="{{ url('transaction/monthly/'.date('m').'_'.date('Y')) }}">Monthly</a>
@@ -42,19 +42,26 @@
     </div>
   </li>
 
-  <!-- Nav Item - Utilities Collapse Menu -->
+  <!-- Nav Item - Categories Collapse Menu -->
   <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="true" aria-controls="collapseCategories">
       <i class="fas fa-tags"></i>
       <span>Categories</span>
     </a>
-    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+    <div id="collapseCategories" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <!-- <h6 class="collapse-header">Custom Utilities:</h6> -->
         <a class="collapse-item" href="{{ url('debit_category') }}">Debits</a>
         <a class="collapse-item" href="{{ url('credit_category') }}">Credits</a>
       </div>
     </div>
+  </li>
+
+  <!-- Nav Item - Budget Plans -->
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url('budget') }}">
+      <i class="fas fa-fw fa-chart-area"></i>
+      <span>Budget Plans</span></a>
   </li>
 
   <!-- Divider -->
@@ -65,11 +72,19 @@
     More
   </div>
 
-  <!-- Nav Item - Charts -->
+  <!-- Nav Item - Transactions Collapse Menu -->
   <li class="nav-item">
-    <a class="nav-link" href="{{ url('budget') }}">
-      <i class="fas fa-fw fa-chart-area"></i>
-      <span>Budget Plans</span></a>
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReport" aria-expanded="true" aria-controls="collapseReport">
+      <i class="fas fa-coins"></i>
+      <span>Reports</span>
+    </a>
+    <div id="collapseReport" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <a class="collapse-item" href="{{ url('report/monthly/'.date('m').'_'.date('Y')) }}">Monthly</a>
+        <a class="collapse-item" href="{{ url('report/annually/'.date('Y')) }}">Annually</a>
+        <!-- <a class="collapse-item" href="{{ url('transaction/annually/'.date('Y')) }}">Annually</a> -->
+      </div>
+    </div>
   </li>
 
   <!-- Nav Item - Tables -->
