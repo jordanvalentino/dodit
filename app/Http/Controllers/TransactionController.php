@@ -45,6 +45,22 @@ class TransactionController extends Controller
         ]);
     }
 
+    private function get_colors($length)
+    {    
+        $colors = [];
+        for ($i = 0; $i < $length; $i++)
+        {
+            $hex = "#";
+            for ($j = 0; $j < 3; $j++)
+            {
+                $hex .= str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+            }
+            $colors[] = $hex;
+        }
+
+        return collect($colors);
+    }
+
     public function monthly(Request $request)
     {
         $months = Transaction::get_available_month_year();
@@ -54,12 +70,19 @@ class TransactionController extends Controller
         $will_overdue = Budget::willOverdue();
         $overdue = Budget::overdue();
 
+        $revenue = collect([
+            'Earnings' => Transaction::earnings($transactions)->sum('amount'),
+            'Spendings' => Transaction::spendings($transactions)->sum('amount'),
+        ]);
+
         return view('transaction.index', [
             'months' => $months,
             'transactions' => $transactions,
             'is_transaction_exist' => $is_transaction_exist,
             'sel_month' => $request->month,
             'sel_year' => $request->year,
+            'revenue' => $revenue,
+            'colors' => $this->get_colors(count($revenue)),
             'will_overdue' => $will_overdue,
             'overdue' => $overdue,
         ]);
@@ -74,11 +97,18 @@ class TransactionController extends Controller
         $will_overdue = Budget::willOverdue();
         $overdue = Budget::overdue();
 
+        $revenue = collect([
+            'Earnings' => Transaction::earnings($transactions)->sum('amount'),
+            'Spendings' => Transaction::spendings($transactions)->sum('amount'),
+        ]);
+
         return view('transaction.index', [
             'years' => $years,
             'transactions' => $transactions,
             'is_transaction_exist' => $is_transaction_exist,
             'sel_year' => $request->year,
+            'revenue' => $revenue,
+            'colors' => $this->get_colors(count($revenue)),
             'will_overdue' => $will_overdue,
             'overdue' => $overdue,
         ]);
@@ -218,28 +248,28 @@ class TransactionController extends Controller
     {
         Excel::create('laporankeuangan', function($excel) {
             $excel->sheet('Sheet1', function($sheet) {
-                    $transactions = Transaction::order_by_date($reverse = true);
+                $transactions = Transaction::order_by_date($reverse = true);
 
-                    foreach($transactions as $key => $trans) {
-                        if($trans->category->type == 'cr')
-                        {
-                            $trans->amount = '-'.$trans->amount;
-                        }
-                        else
-                        {
-                            $trans->amount = '+'.$trans->amount;
-                        }
+                foreach($transactions as $key => $trans) {
+                    if($trans->category->type == 'cr')
+                    {
+                        $trans->amount = '-'.$trans->amount;
                     }
-                    
-                    foreach($transactions as $key => $trans) {
-                     $data[] = array(
-                        $key+1,
-                        $trans->created_at,
-                        $trans->detail,
-                        $trans->amount,
-                        $trans->category->name
-                        );
+                    else
+                    {
+                        $trans->amount = '+'.$trans->amount;
                     }
+                }
+                
+                foreach($transactions as $key => $trans) {
+                 $data[] = array(
+                    $key+1,
+                    $trans->created_at,
+                    $trans->detail,
+                    $trans->amount,
+                    $trans->category->name
+                    );
+                }
 
                 $headings = array('no', 'Date', 'Detail', 'Amount', 'Category');
                 $sheet->prependRow(1, $headings);

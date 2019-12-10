@@ -19,6 +19,7 @@
 
 @section('script')
   <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
+  <script src="{{ asset('vendor/chart.js/Chart.js') }}"></script>
 @endsection
 
 
@@ -71,6 +72,7 @@
         @endif
 
       </div>
+
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -78,8 +80,8 @@
               <tr>
                 <th>Date & Time</th>
                 <th>Category</th>
-                <th>Amount</th>
                 <th>Detail</th>
+                <th>Amount</th>
                 <th>Attachment</th>
                 <th colspan=2>Actions</th>
               </tr>
@@ -88,8 +90,8 @@
               <tr>
                 <th>Date & Time</th>
                 <th>Category</th>
-                <th>Amount</th>
                 <th>Detail</th>
+                <th>Amount</th>
                 <th>Attachment</th>
                 <th colspan=2>Actions</th>
               </tr>
@@ -105,17 +107,17 @@
 
                 @foreach ($transactions as $trans)
                 <tr>
-                  <td>{{ date('j/m/Y (H:i A)', strtotime($trans->created_at)) }}</td>
+                  <td>{{ date('j/m/Y', strtotime($trans->created_at)) }}</td>
                   <td>{{ $trans->category->name }}</td>
+                  <td>{{ $trans->detail }}</td>
                   <td>
                     @if ($trans->category->type == 'cr')
                     -
                     @else
                     +
                     @endif
-                    {{ $trans->amount }}
+                    {{ number_format($trans->amount) }}
                   </td>
-                  <td>{{ $trans->detail }}</td>
                   <td>
                     @if ($trans->attachment != null)
                     <a href="{{ Storage::url($trans->attachment) }}" target="_blank">See attachment</a>
@@ -135,12 +137,15 @@
               @endif
             </tbody>
           </table>
-          <a href="{{url('transaction/export/pdf')}}">
+
+          <div class="my-2">
+            <a class="btn btn-danger mx-2 my-2" href="{{url('transaction/export/pdf')}}">
               Export to PDF
-          </a><br>
-          <a href="{{url('transaction/export/excel')}}">
-              Export to Excel
-          </a>
+            </a>
+            <a class="btn btn-success mx-2 my-2" href="{{url('transaction/export/excel')}}">
+                Export to Excel
+            </a>
+          </div>
         </div>
       </div>
     </div>
