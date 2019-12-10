@@ -16,28 +16,32 @@
       <tr>
         <th>No.</th>
         <th>Date</th>
+        <th>Category</th>
         <th>Detail</th>
         <th>Amount</th>
-        <th>Category</th>
       </tr>
     </thead>
     <tbody>
       @foreach ($transactions as $key => $trans)
-                <tr>
-                  <td>{{ $key + 1 }}</td>
-                  <td>{{ date('d-M-y', strtotime($trans->created_at)) }}</td>
-                  <td>{{ $trans->detail }}</td>
-                  <td>
-                    @if ($trans->category->type == 'cr')
-                    -
-                    @else
-                    +
-                    @endif
-                    {{ $trans->amount }}
-                  </td>                  
-                  <td>{{ $trans->category->name }}</td>
-                </tr>
-                @endforeach
+      <tr>
+        <td>{{ $key + 1 }}</td>
+        <td>{{ date('d/m/Y', strtotime($trans->created_at)) }}</td>
+        <td>{{ $trans->category->name }}</td>
+        <td>{{ $trans->detail }}</td>
+        <td>
+          @if ($trans->category->type == 'cr')
+          -
+          @else
+          +
+          @endif
+          {{ number_format($trans->amount) }}
+        </td>
+      </tr>
+      @endforeach
+      <tr>
+        <td colspan=4 align="right"><b>Total Amount</b></td>
+        <td>{{ ($transactions->sum('amount') < 0) ? '-' : '' }} {{ number_format($transactions->sum('amount')) }}</td>
+      </tr>
     </tbody>
   </table>
 </div>
