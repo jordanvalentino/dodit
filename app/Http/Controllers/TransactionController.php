@@ -246,35 +246,26 @@ class TransactionController extends Controller
 
     public function export_excel()
     {
-        Excel::create('laporankeuangan', function($excel) {
-            $excel->sheet('Sheet1', function($sheet) {
+        Excel::create('laporankeuangan', function($excel)
+        {
+            $excel->sheet('Sheet1', function($sheet)
+            {
                 $transactions = Transaction::order_by_date($reverse = true);
-
-                foreach($transactions as $key => $trans) {
-                    if($trans->category->type == 'cr')
-                    {
-                        $trans->amount = '-'.$trans->amount;
-                    }
-                    else
-                    {
-                        $trans->amount = '+'.$trans->amount;
-                    }
-                }
                 
-                foreach($transactions as $key => $trans) {
-                 $data[] = array(
-                    $key+1,
-                    $trans->created_at,
-                    $trans->detail,
-                    $trans->amount,
-                    $trans->category->name
-                    );
+                $data = [];
+                foreach($transactions as $key => $trans)
+                {
+                    $data[] = [
+                        'No' => $key+1,
+                        'Date' => date('d/m/Y', strtotime($trans->created_at)),
+                        'Category' => $trans->category->name,
+                        'Detail' => $trans->detail,
+                        'Amount' => (($trans->category->type == 'cr') ? -1 : 1) * $trans->amount,
+                    ];
                 }
 
-                $headings = array('no', 'Date', 'Detail', 'Amount', 'Category');
-                $sheet->prependRow(1, $headings);
                 $sheet->fromArray($data);
             });
-        })->export('xls');
+        })->download('xlsx');
     }
 }

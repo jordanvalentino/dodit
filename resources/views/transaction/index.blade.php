@@ -139,11 +139,11 @@
           </table>
 
           <div class="my-2">
-            <a class="btn btn-danger mx-2 my-2" href="{{url('transaction/export/pdf')}}">
+            <a class="btn btn-danger mx-2 my-2" href="{{ url('transaction/export/pdf') }}">
               Export to PDF
             </a>
-            <a class="btn btn-success mx-2 my-2" href="{{url('transaction/export/excel')}}">
-                Export to Excel
+            <a class="btn btn-success mx-2 my-2" href="{{ url('transaction/export/excel') }}">
+              Export to Excel
             </a>
           </div>
         </div>
