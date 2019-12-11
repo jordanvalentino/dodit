@@ -46,7 +46,7 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Credit Categories</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Expense Categories</h6>
         <a href="{{ url('credit_category/create') }}" class="btn btn-primary my-2">
           <span class="text">Create New</span>
         </a>

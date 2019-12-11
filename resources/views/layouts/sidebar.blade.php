@@ -51,8 +51,8 @@
     <div id="collapseCategories" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
         <!-- <h6 class="collapse-header">Custom Utilities:</h6> -->
-        <a class="collapse-item" href="{{ url('debit_category') }}">Debits</a>
-        <a class="collapse-item" href="{{ url('credit_category') }}">Credits</a>
+        <a class="collapse-item" href="{{ url('debit_category') }}">Incomes</a>
+        <a class="collapse-item" href="{{ url('credit_category') }}">Expenses</a>
       </div>
     </div>
   </li>
