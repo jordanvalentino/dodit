@@ -78,7 +78,7 @@
           <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
               <tr>
-                <th>Date & Time</th>
+                <th>Date</th>
                 <th>Category</th>
                 <th>Detail</th>
                 <th>Amount</th>
@@ -88,7 +88,7 @@
             </thead>
             <tfoot>
               <tr>
-                <th>Date & Time</th>
+                <th>Date</th>
                 <th>Category</th>
                 <th>Detail</th>
                 <th>Amount</th>
