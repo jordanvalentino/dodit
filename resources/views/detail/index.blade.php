@@ -55,15 +55,15 @@
           <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
             <thead>
               <tr>
-                <th>Amount</th>
                 <th>Date & Time</th>
+                <th>Amount</th>
                 <th colspan=2>Actions</th>
               </tr>
             </thead>
             <tfoot>
               <tr>
-                <th>Amount</th>
                 <th>Date & Time</th>
+                <th>Amount</th>
                 <th colspan=2>Actions</th>
               </tr>
             </tfoot>
@@ -78,8 +78,8 @@
 
                 @foreach ($details as $det)
                 <tr>
+                  <td>{{ date('d M \'y', strtotime($det->created_at)) }}</td>
                   <td>{{ $det->amount }}</td>
-                  <td>{{ date('d M \'y', strtotime($det->amount)) }}</td>
                   <td><a href="{{ url('detail/'.$budget->id.'/'.$det->id.'/edit') }}">Edit</a></td>
                   <td>
                     <form method="POST" action="{{ url('detail/'.$budget->id.'/'.$det->id) }}" id="delete-{{ $det->id }}">
