@@ -50,6 +50,9 @@ class DetailController extends Controller
         $budget = Budget::find($request->budget_id);
         $budget->details()->save($detail);
 
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
         if ($budget->progress() == 1)
         {
             $budget->is_finished = 1;
@@ -133,10 +136,15 @@ class DetailController extends Controller
 
         $details = $budget->details()->get();
 
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
         return view('detail.index', [
             'budget' => $budget,
             'details' => $details,
             'is_detail_exist' => true,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ])->with('message', "Budget detail has been deleted successfully.");
     }
 
@@ -170,10 +178,15 @@ class DetailController extends Controller
         $details = $budget->details()->get();
         $is_detail_exist = $budget->hasDetails();
 
+        $will_overdue = Budget::willOverdue();
+        $overdue = Budget::overdue();
+
         return view('detail.index', [
             'budget' => $budget,
             'details' => $details,
             'is_detail_exist' => $is_detail_exist,
+            'will_overdue' => $will_overdue,
+            'overdue' => $overdue,
         ])->with('message', "Budget detail has been deleted successfully.");
     }
 }
