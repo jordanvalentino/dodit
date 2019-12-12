@@ -39,7 +39,7 @@ class Category extends Model
 
     public function hasChildren()
     {
-        return self::children()->count() > 0;
+        return $this->children()->count() > 0;
     }
 
     public static function isExist()

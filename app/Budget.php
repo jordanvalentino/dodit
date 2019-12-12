@@ -38,7 +38,7 @@ class Budget extends Model
 
     public function hasDetails()
     {
-        return self::details()->count() > 0;
+        return $this->details()->count() > 0;
     }
 
     public function stored()
