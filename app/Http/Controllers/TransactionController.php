@@ -236,8 +236,12 @@ class TransactionController extends Controller
     public function export_pdf()
     {
         $transactions = Transaction::order_by_date($reverse = true);
+        $total_amount = Transaction::earnings($transactions)->sum('amount') - Transaction::spendings($transactions)->sum('amount');
 
-        $pdf = PDF::loadview('export.index',['transactions'=>$transactions]);
+        $pdf = PDF::loadview('export.index',[
+            'transactions' => $transactions,
+            'total_amount' => $total_amount,
+        ]);
         //auto buka di browser
         return $pdf->stream();
         // auto download file pdf

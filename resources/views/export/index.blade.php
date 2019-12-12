@@ -40,7 +40,10 @@
       @endforeach
       <tr>
         <td colspan=4 align="right"><b>Total Amount</b></td>
-        <td>{{ ($transactions->sum('amount') < 0) ? '-' : '' }} {{ number_format($transactions->sum('amount')) }}</td>
+        <td>
+          {{ ($transactions->sum('amount') < 0) ? '-' : '' }} 
+          {{ number_format($total_amount) }}
+        </td>
       </tr>
     </tbody>
   </table>
