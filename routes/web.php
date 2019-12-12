@@ -22,8 +22,6 @@ Route::resource('budget', 'BudgetController');
 Route::resource('detail', 'DetailController');
 Route::resource('debit_category', 'DebitCategoryController');
 Route::resource('credit_category', 'CreditCategoryController');
-Route::resource('debit_transaction', 'DebitTransactionController');
-Route::resource('credit_transaction', 'CreditTransactionController');
 Route::resource('transaction', 'TransactionController');
 
 Route::get('detail/create/{budget_id}', 'DetailController@create');
