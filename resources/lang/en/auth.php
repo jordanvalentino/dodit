@@ -14,6 +14,7 @@ return [
     */
 
     'failed' => 'These credentials do not match our records.',
+    'multilogin' => 'Someone has already logged in with this account.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
 ];

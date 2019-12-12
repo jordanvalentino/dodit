@@ -51,6 +51,21 @@ class LoginController extends Controller
     }
 
     /**
+     * Attempt to log the user into the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function attemptLogin(Request $request)
+    {
+        return Auth::attempt([
+            'email' => $request->{$this->username()},
+            'password' => $request->password,
+            'is_login' => 0
+        ], true);
+    }
+
+    /**
      * Get the needed authorization credentials from the request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -78,6 +93,32 @@ class LoginController extends Controller
         $user->save();
 
         return redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        $errors = [$this->username() => trans('auth.failed')];
+
+        $user = User::where($this->username(), $request->{$this->username()})->first();
+
+        if ($user && \Hash::check($request->password, $user->password) && $user->is_login == 1)
+        {
+            $errors = [$this->username() => trans('auth.multilogin')];
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json($errors, 422);
+        }
+
+        return redirect()->back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors($errors);
     }
 
     /**
